@@ -19,7 +19,7 @@ class CryptoController extends GetxController {
     fetchCryptoData();
 
     //* 5 saniyede bir veriler çekiliyor
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 300), (timer) {
       fetchCryptoData();
     });
   }

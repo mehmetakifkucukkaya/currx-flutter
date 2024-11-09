@@ -1,4 +1,5 @@
 import 'package:currx/controllers/crypto_controller.dart';
+import 'package:currx/pages/crypto_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -83,7 +84,7 @@ class CryptoTab extends StatelessWidget {
                     ],
                   ),
                   onTap: () {
-                    // TODO: Detay sayfası yapıalcak
+                    Get.to(() => CryptoDetailPage(crypto: crypto));
                   },
                 ),
               );

@@ -47,6 +47,7 @@ dependencies:
 
   # For env file
   flutter_dotenv: ^5.2.1
+  intl: ^0.19.0
   
 
 dev_dependencies:
