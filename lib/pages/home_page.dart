@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
         appBar: AppBar(
           centerTitle: true,
           title: const Text(
-            'Döviz, Altın, Emtia ve Kripto Listesi',
+            'Piyasa Listesi',
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.red,

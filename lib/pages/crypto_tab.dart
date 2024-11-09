@@ -11,18 +11,56 @@ class CryptoTab extends StatelessWidget {
     final CryptoController controller = Get.put(CryptoController());
 
     return Scaffold(
+      appBar: AppBar(
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(26.0),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    onChanged: (query) {
+                      controller.updateSearchQuery(
+                          query); // Arama kutusuna yazıldıkça filtreleniceek.
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'İsim veya Kod ile arayın',
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                      ),
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: controller.searchQuery.value.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(
+                                Icons.clear,
+                                color: Colors.red,
+                              ),
+                              onPressed: () {
+                                controller.updateSearchQuery('');
+                              },
+                            )
+                          : null,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.only(top: 10.0, left: 16.0, right: 16.0),
         child: Obx(() {
-          // Eğer veri listesi boşsa, hiçbir şey gösterilmeyecek
-          if (controller.cryptoList.isEmpty) {
-            return Container();
+          //* Veri boş ise bu ayzacak
+          if (controller.filteredList.isEmpty) {
+            return const Center(child: Text('Veri Yok'));
           }
 
           return ListView.builder(
-            itemCount: controller.cryptoList.length,
+            itemCount: controller.filteredList.length,
             itemBuilder: (context, index) {
-              final crypto = controller.cryptoList[index];
+              final crypto = controller.filteredList[index];
               final changeColor =
                   crypto.changeDay < 0 ? Colors.red : Colors.green;
 
@@ -40,8 +78,8 @@ class CryptoTab extends StatelessWidget {
                     backgroundColor: Colors.red[500],
                     child: Text(
                       crypto.code.length > 4
-                          ? crypto.code.substring(0,
-                              4) // 4 den büyük bir code değeri var ise şlk 4 harfi gösteriyoruz
+                          ? crypto.code
+                              .substring(0, 4) //* İlk 4 harfi gösteriyoruz
                           : crypto.code,
                       style: const TextStyle(
                         color: Colors.white,
