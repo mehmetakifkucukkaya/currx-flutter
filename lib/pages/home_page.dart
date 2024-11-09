@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'commodity_tab.dart'; // Yeni tab import ediliyor
-import 'currency_tab.dart';
-import 'gold_tab.dart';
+import 'commodity_tab.dart'; // Emtia tab'ı
+import 'crypto_tab.dart'; // Kripto tab'ı
+import 'currency_tab.dart'; // Döviz tab'ı
+import 'gold_tab.dart'; // Altın tab'ı
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -17,8 +18,12 @@ class HomePage extends StatelessWidget {
       'page': GoldTab(),
     },
     {
-      'title': 'Emtia', 
-      'page': CommodityTab(), 
+      'title': 'Emtia',
+      'page': CommodityTab(),
+    },
+    {
+      'title': 'Kripto',
+      'page': CryptoTab(), // Yeni kripto tab'ı
     },
   ];
 
@@ -30,7 +35,7 @@ class HomePage extends StatelessWidget {
         appBar: AppBar(
           centerTitle: true,
           title: const Text(
-            'Döviz, Altın ve Emtia Listesi',
+            'Döviz, Altın, Emtia ve Kripto Listesi',
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.red,
