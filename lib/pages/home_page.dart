@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'commodity_tab.dart'; // Yeni tab import ediliyor
 import 'currency_tab.dart';
 import 'gold_tab.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  // Tab sayfalarının verisi
   final List<Map<String, dynamic>> tabPages = const [
     {
       'title': 'Döviz',
@@ -15,6 +15,10 @@ class HomePage extends StatelessWidget {
     {
       'title': 'Altın',
       'page': GoldTab(),
+    },
+    {
+      'title': 'Emtia', 
+      'page': CommodityTab(), 
     },
   ];
 
@@ -26,7 +30,7 @@ class HomePage extends StatelessWidget {
         appBar: AppBar(
           centerTitle: true,
           title: const Text(
-            'Döviz ve Altın Listesi',
+            'Döviz, Altın ve Emtia Listesi',
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.red,
