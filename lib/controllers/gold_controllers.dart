@@ -15,7 +15,7 @@ class GoldController extends GetxController {
   void onInit() {
     super.onInit();
     fetchGoldPrices();
-   
+
     debounce(
       searchQuery,
       (_) => filterGold(),

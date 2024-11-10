@@ -1,5 +1,6 @@
 import 'package:currx/controllers/currency_controller.dart';
-import 'package:currx/widgets/currency_list_tile.dart';
+import 'package:currx/model/currency.dart';
+import 'package:currx/widgets/list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -18,7 +19,17 @@ class CurrencyTab extends StatelessWidget {
           itemCount: controller.filteredCurrencies.length,
           itemBuilder: (context, index) {
             var currency = controller.filteredCurrencies[index];
-            return CurrencyListTile(currency: currency);
+
+            // ListTileWidget'i burada kullanalım
+            return ListTileWidget<Currency>(
+              data: currency,
+              name: currency.name,
+              dateTime: currency.dateTime,
+              buyingPrice: currency.buyingPrice,
+              sellingPrice: currency.sellingPrice,
+              rate: currency.rate,
+              isIncreasing: currency.isIncreasing,
+            );
           },
         );
       }

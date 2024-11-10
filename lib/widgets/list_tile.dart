@@ -1,16 +1,35 @@
-import 'package:currx/model/currency.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class CurrencyListTile extends StatelessWidget {
-  final Currency currency;
+class ListTileWidget<T> extends StatelessWidget {
+  final T data;
+  final String name;
+  final DateTime dateTime;
+  final double buyingPrice;
+  final double sellingPrice;
+  final double rate;
+  final bool isIncreasing;
 
-  const CurrencyListTile({super.key, required this.currency});
+  const ListTileWidget({
+    super.key,
+    required this.data,
+    required this.name,
+    required this.dateTime,
+    required this.buyingPrice,
+    required this.sellingPrice,
+    required this.rate,
+    required this.isIncreasing,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final timeString = DateFormat('HH:mm').format(currency.dateTime);
-    final dateString = DateFormat('dd/MM/yyyy').format(currency.dateTime);
+    final timeString = DateFormat('HH:mm').format(dateTime);
+    final dateString = DateFormat('dd/MM/yyyy').format(dateTime);
+
+    // Format the prices with two decimal places for better UI consistency
+    String formatPrice(double price) {
+      return price.toStringAsFixed(2);
+    }
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -23,7 +42,7 @@ class CurrencyListTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  currency.name,
+                  name,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -67,7 +86,7 @@ class CurrencyListTile extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${currency.buyingPrice.toStringAsFixed(4)} ₺',
+                      '${formatPrice(buyingPrice)} ₺',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -87,7 +106,7 @@ class CurrencyListTile extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${currency.sellingPrice.toStringAsFixed(4)} ₺',
+                      '${formatPrice(sellingPrice)} ₺',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -100,27 +119,23 @@ class CurrencyListTile extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: currency.isIncreasing
-                        ? Colors.green[50]
-                        : Colors.red[50],
+                    color: isIncreasing ? Colors.green[50] : Colors.red[50],
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
                     children: [
                       Icon(
-                        currency.isIncreasing
+                        isIncreasing
                             ? Icons.arrow_upward
                             : Icons.arrow_downward,
-                        color:
-                            currency.isIncreasing ? Colors.green : Colors.red,
+                        color: isIncreasing ? Colors.green : Colors.red,
                         size: 16,
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '%${currency.rate.abs().toStringAsFixed(2)}',
+                        '%${rate.abs().toStringAsFixed(2)}',
                         style: TextStyle(
-                          color:
-                              currency.isIncreasing ? Colors.green : Colors.red,
+                          color: isIncreasing ? Colors.green : Colors.red,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
