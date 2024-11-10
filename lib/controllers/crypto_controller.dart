@@ -52,7 +52,7 @@ class CryptoController extends GetxController {
         throw Exception("API Error: ${response.statusCode}");
       }
     } catch (e) {
-      print('Error: $e');
+      print('Error: (Crypto) $e');
     } finally {
       isLoading(false);
     }

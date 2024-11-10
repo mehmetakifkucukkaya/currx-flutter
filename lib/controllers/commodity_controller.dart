@@ -64,7 +64,7 @@ class CommodityController extends GetxController {
         print('API Response success false');
       }
     } catch (e) {
-      print('Error: $e');
+      print('Error (Commodity): $e');
     } finally {
       isLoading(false);
     }

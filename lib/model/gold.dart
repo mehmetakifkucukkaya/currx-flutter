@@ -19,12 +19,6 @@ class Gold {
         ? DateTime.parse(json['datetime'])
         : DateTime.now();
 
-    // Verilerin loglanması
-    print('buying: ${json['buying']}');
-    print('selling: ${json['selling']}');
-    print('rate: ${json['rate']}'); // rate verisini de kontrol edin
-
-    // `String` değerleri `double`'a dönüştürme
     double buyingPrice = 0.0;
     double sellingPrice = 0.0;
     double rateValue = 0.0;
@@ -32,8 +26,7 @@ class Gold {
     try {
       buyingPrice = double.tryParse(json['buying'].toString()) ?? 0.0;
       sellingPrice = double.tryParse(json['selling'].toString()) ?? 0.0;
-      rateValue = double.tryParse(json['rate'].toString()) ??
-          0.0; // `rate`'i de güvenli bir şekilde parse et
+      rateValue = double.tryParse(json['rate'].toString()) ?? 0.0;
     } catch (e) {
       print("Error parsing prices: $e");
     }
@@ -43,7 +36,7 @@ class Gold {
       buying: buyingPrice,
       selling: sellingPrice,
       dateTime: date,
-      rate: rateValue, // rate değerini burada doğru şekilde alıyoruz
+      rate: rateValue,
     );
   }
 }
