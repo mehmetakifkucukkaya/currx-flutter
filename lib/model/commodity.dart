@@ -4,6 +4,7 @@ class Commodity {
   final String buyingStr;
   final String sellingStr;
   final double rate;
+  final String? date;  // Make the date field nullable
 
   Commodity({
     required this.name,
@@ -11,6 +12,7 @@ class Commodity {
     required this.buyingStr,
     required this.sellingStr,
     required this.rate,
+    this.date,  // Allow date to be null
   });
 
   factory Commodity.fromJson(Map<String, dynamic> json) {
@@ -19,8 +21,8 @@ class Commodity {
       text: json['text'],
       buyingStr: json['buyingstr'] ?? '0',
       sellingStr: json['sellingstr'],
-      // rate'yi string'ten double'a çevirmek için tryParse kullanıyoruz
       rate: double.tryParse(json['rate'].toString()) ?? 0.0,
+      date: json['date'] as String?,  // Handle null values gracefully
     );
   }
 }

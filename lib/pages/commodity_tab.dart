@@ -1,4 +1,6 @@
 import 'package:currx/controllers/commodity_controller.dart';
+import 'package:currx/model/commodity.dart';
+import 'package:currx/widgets/list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -22,27 +24,25 @@ class CommodityTab extends StatelessWidget {
         itemCount: controller.filteredCommodities.length,
         itemBuilder: (context, index) {
           final commodity = controller.filteredCommodities[index];
-          return Card(
-            color: Colors.white,
-            elevation: 2.0,
-            margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: ListTile(
-              title: Text(
-                commodity.text,
-                style: const TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-              subtitle: Text(
-                'Alış: ${commodity.buyingStr}\nSatış: ${commodity.sellingStr}',
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ),
+
+          // Parse the buying and selling prices as doubles
+          final buyingPrice = double.tryParse(commodity.buyingStr) ?? 0.0;
+          final sellingPrice = double.tryParse(commodity.sellingStr) ?? 0.0;
+
+          // Handle null date values gracefully by using a default value
+          final commodityDate =
+              commodity.date ?? ''; // Default to empty string if date is null
+
+          return ListTileWidget<Commodity>(
+            data: commodity,
+            name: commodity.text,
+            dateTime: commodityDate.isNotEmpty
+                ? DateTime.parse(commodityDate)
+                : DateTime.now(), // Parse date or use current date
+            buyingPrice: buyingPrice,
+            sellingPrice: sellingPrice,
+            rate: commodity.rate,
+            isIncreasing: commodity.rate > 0,
           );
         },
       );
