@@ -7,20 +7,21 @@ class CommodityTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // GetX controller'ı alıyoruz
-    final CommodityController controller = Get.put(CommodityController());
+    final CommodityController controller = Get.find<CommodityController>();
 
     return Obx(() {
-      // Loading durumu kontrolü
       if (controller.isLoading.value) {
         return const Center(child: CircularProgressIndicator());
       }
 
-      // Veriler geldiğinde listeleniyor
+      if (controller.filteredCommodities.isEmpty) {
+        return const Center(child: Text('Emtia verisi bulunamadı.'));
+      }
+
       return ListView.builder(
-        itemCount: controller.commodities.length,
+        itemCount: controller.filteredCommodities.length,
         itemBuilder: (context, index) {
-          final commodity = controller.commodities[index];
+          final commodity = controller.filteredCommodities[index];
           return Card(
             color: Colors.white,
             elevation: 2.0,
@@ -29,14 +30,17 @@ class CommodityTab extends StatelessWidget {
               title: Text(
                 commodity.text,
                 style: const TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
               ),
               subtitle: Text(
                 'Alış: ${commodity.buyingStr}\nSatış: ${commodity.sellingStr}',
                 style: const TextStyle(
-                    color: Colors.grey, fontWeight: FontWeight.w800),
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
           );

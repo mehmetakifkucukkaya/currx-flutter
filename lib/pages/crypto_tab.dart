@@ -8,47 +8,9 @@ class CryptoTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CryptoController controller = Get.put(CryptoController());
+    final CryptoController controller = Get.find();
 
     return Scaffold(
-      appBar: AppBar(
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(26.0),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    onChanged: (query) {
-                      controller.updateSearchQuery(
-                          query); // Arama kutusuna yazıldıkça filtreleniceek.
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'İsim veya Kod ile arayın',
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                      ),
-                      prefixIcon: const Icon(Icons.search),
-                      suffixIcon: controller.searchQuery.value.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(
-                                Icons.clear,
-                                color: Colors.red,
-                              ),
-                              onPressed: () {
-                                controller.updateSearchQuery('');
-                              },
-                            )
-                          : null,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
       body: Padding(
         padding: const EdgeInsets.only(top: 10.0, left: 16.0, right: 16.0),
         child: Obx(() {

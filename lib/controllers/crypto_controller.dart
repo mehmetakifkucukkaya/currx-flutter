@@ -1,8 +1,8 @@
-import 'dart:async'; // Timer için gerekli import
+import 'dart:async';
 
 import 'package:currx/model/crypto.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart'; // For TextEditingController
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 
@@ -10,8 +10,8 @@ class CryptoController extends GetxController {
   var isLoading = true.obs;
   var cryptoList = <CryptoModel>[].obs;
 
-  var searchQuery = ''.obs;
-  TextEditingController searchController = TextEditingController(); // Add this
+  var searchQuery = ''.obs; // Arama sorgusunu RxString olarak tanımlıyoruz
+  TextEditingController searchController = TextEditingController();
 
   var apiKey = dotenv.env['API_KEY']!;
 
@@ -25,6 +25,11 @@ class CryptoController extends GetxController {
     // Verilerin 5 saniyede bir güncellenmesi için Timer
     _timer = Timer.periodic(const Duration(seconds: 300), (timer) {
       fetchCryptoData();
+    });
+
+    //* Arama işlemi için query'i güncelliyoruz
+    searchController.addListener(() {
+      updateSearchQuery(searchController.text);
     });
   }
 
@@ -56,10 +61,10 @@ class CryptoController extends GetxController {
     }
   }
 
-  // Arama sorgusuna göre filtrelenmiş liste
+  //! Arama sorgusuna göre filtrelenmiş listemiz
   List<CryptoModel> get filteredList {
     if (searchQuery.value.isEmpty) {
-      return cryptoList; // Eğer arama sorgusu boşsa, tüm listeyi döndür
+      return cryptoList;
     } else {
       return cryptoList
           .where((crypto) =>
@@ -69,25 +74,23 @@ class CryptoController extends GetxController {
               crypto.code
                   .toLowerCase()
                   .contains(searchQuery.value.toLowerCase()))
-          .toList(); // Arama sorgusuna uyan öğeleri döndür
+          .toList();
     }
   }
 
-  // Arama sorgusunu güncelleme
   void updateSearchQuery(String query) {
     searchQuery.value = query;
   }
 
-  // Arama kutusunu temizleme fonksiyonu
   void clearSearchQuery() {
-    searchQuery.value = ''; // Arama sorgusunu temizle
-    searchController.clear(); // Clear the TextEditingController
+    searchQuery.value = '';
+    searchController.clear();
   }
 
   @override
   void onClose() {
     super.onClose();
     _timer?.cancel(); // Sayfa kapatıldığında timer'ı durdur
-    searchController.dispose(); // Dispose of the TextEditingController
+    searchController.dispose();
   }
 }

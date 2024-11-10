@@ -1,18 +1,42 @@
-import 'package:currx/model/currency.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 
-class CurrencyController extends GetxController {
-  var currencies = <Currency>[].obs; // Döviz listemiz
-  var isLoading = true.obs;
+import '../model/currency.dart';
 
-  var apiKey = dotenv.env['API_KEY']!;
+class CurrencyController extends GetxController {
+  var currencies = <Currency>[].obs;
+  var filteredCurrencies = <Currency>[].obs;
+  var isLoading = true.obs;
+  RxString searchQuery = ''.obs; 
+
+  final apiKey = dotenv.env['API_KEY']!;
 
   @override
   void onInit() {
     super.onInit();
     fetchCurrencies();
+    
+    debounce(
+      searchQuery,
+      (_) => filterCurrencies(),
+      time: const Duration(milliseconds: 300),
+    );
+  }
+
+  void filterCurrencies() {
+    if (searchQuery.value.isEmpty) {
+      filteredCurrencies.value = currencies;
+    } else {
+      filteredCurrencies.value = currencies.where((currency) {
+        return currency.code
+                .toLowerCase()
+                .contains(searchQuery.value.toLowerCase()) ||
+            currency.name
+                .toLowerCase()
+                .contains(searchQuery.value.toLowerCase());
+      }).toList();
+    }
   }
 
   Future<void> fetchCurrencies() async {
@@ -32,6 +56,7 @@ class CurrencyController extends GetxController {
       currencies.value = List<Currency>.from(
         data.map((currency) => Currency.fromJson(currency)),
       );
+      filterCurrencies();
     } catch (e) {
       print("API isteği başarısız: $e");
     } finally {

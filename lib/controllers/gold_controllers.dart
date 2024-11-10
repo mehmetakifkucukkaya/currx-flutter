@@ -5,12 +5,38 @@ import 'package:get/get.dart';
 
 class GoldController extends GetxController {
   var isLoading = true.obs;
-  var goldPrices = <Map<String, dynamic>>[].obs; // Altın fiyat listemiz
+  var goldList = <Gold>[].obs;
+  var filteredGoldList = <Gold>[].obs;
+  RxString searchQuery = ''.obs;
 
-  var apiKey = dotenv.env['API_KEY']!;
+  final apiKey = dotenv.env['API_KEY']!;
 
-  // Altın fiyatlarını çeken metod
-  Future<List<Gold>> fetchGoldPrices() async {
+  @override
+  void onInit() {
+    super.onInit();
+    fetchGoldPrices();
+   
+    debounce(
+      searchQuery,
+      (_) => filterGold(),
+      time: const Duration(milliseconds: 300),
+    );
+  }
+
+  void filterGold() {
+    if (searchQuery.value.isEmpty) {
+      filteredGoldList.value = goldList;
+    } else {
+      filteredGoldList.value = goldList.where((gold) {
+        return gold.name
+            .toLowerCase()
+            .contains(searchQuery.value.toLowerCase());
+      }).toList();
+    }
+  }
+
+  Future<void> fetchGoldPrices() async {
+    isLoading(true);
     try {
       var dio = Dio();
       var response = await dio.get(
@@ -24,15 +50,16 @@ class GoldController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        List<Gold> goldList = (response.data['result'] as List)
-            .map((item) => Gold.fromJson(item))
-            .toList();
-        return goldList;
+        var data = response.data['result'] as List;
+        goldList.value = data.map((item) => Gold.fromJson(item)).toList();
+        filterGold(); // İlk yüklemede filtrelenmiş listeyi güncelle
       } else {
         throw Exception('Altın fiyatları yüklenemedi');
       }
     } catch (e) {
-      throw Exception('Altın fiyatları alınırken bir hata oluştu: $e');
+      print('Altın fiyatları alınırken bir hata oluştu: $e');
+    } finally {
+      isLoading(false);
     }
   }
 }

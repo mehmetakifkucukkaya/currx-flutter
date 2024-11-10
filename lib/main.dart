@@ -1,3 +1,5 @@
+import 'package:currx/controllers/commodity_controller.dart';
+import 'package:currx/controllers/crypto_controller.dart';
 import 'package:currx/controllers/currency_controller.dart';
 import 'package:currx/controllers/gold_controllers.dart';
 import 'package:currx/pages/home_page.dart';
@@ -10,11 +12,13 @@ void main() async {
 
   runApp(
     GetMaterialApp(
-      home: const HomePage(),
+      home: HomePage(),
       debugShowCheckedModeBanner: false,
       initialBinding: BindingsBuilder(() {
         Get.put(CurrencyController());
         Get.put(GoldController());
+        Get.put(CommodityController());
+        Get.put(CryptoController());
       }),
     ),
   );

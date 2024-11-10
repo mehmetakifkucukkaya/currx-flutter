@@ -15,9 +15,9 @@ class CurrencyTab extends StatelessWidget {
         return const Center(child: CircularProgressIndicator());
       } else {
         return ListView.builder(
-          itemCount: controller.currencies.length,
+          itemCount: controller.filteredCurrencies.length,
           itemBuilder: (context, index) {
-            var currency = controller.currencies[index];
+            var currency = controller.filteredCurrencies[index];
             return CurrencyListTile(currency: currency);
           },
         );

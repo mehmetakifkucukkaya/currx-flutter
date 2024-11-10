@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 
 class CommodityController extends GetxController {
   var commodities = <Commodity>[].obs;
+  var filteredCommodities = <Commodity>[].obs;
   var isLoading = true.obs;
+  RxString searchQuery = ''.obs;
 
   late Dio _dio;
 
@@ -14,6 +16,24 @@ class CommodityController extends GetxController {
     super.onInit();
     _dio = Dio();
     fetchCommodities();
+
+    debounce(
+      searchQuery,
+      (_) => filterCommodities(),
+      time: const Duration(milliseconds: 300),
+    );
+  }
+
+  void filterCommodities() {
+    if (searchQuery.value.isEmpty) {
+      filteredCommodities.value = commodities;
+    } else {
+      filteredCommodities.value = commodities.where((commodity) {
+        return commodity.text
+            .toLowerCase()
+            .contains(searchQuery.value.toLowerCase());
+      }).toList();
+    }
   }
 
   Future<void> fetchCommodities() async {
@@ -34,14 +54,12 @@ class CommodityController extends GetxController {
         options: options,
       );
 
-      // Yanıtı konsola yazdır
-      print('Response: ${response.data}');
-
       if (response.data['success'] == true) {
         var commodityList = (response.data['result'] as List)
             .map((item) => Commodity.fromJson(item))
             .toList();
-        commodities.assignAll(commodityList); // UI'yı tetikler
+        commodities.assignAll(commodityList);
+        filterCommodities(); // Filtrelenmiş listeyi güncelleyoruz
       } else {
         print('API Response success false');
       }
