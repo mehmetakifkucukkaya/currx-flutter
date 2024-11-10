@@ -10,7 +10,7 @@ class CryptoController extends GetxController {
   var isLoading = true.obs;
   var cryptoList = <CryptoModel>[].obs;
 
-  var searchQuery = ''.obs; // Arama sorgusunu RxString olarak tanımlıyoruz
+  var searchQuery = ''.obs;
   TextEditingController searchController = TextEditingController();
 
   var apiKey = dotenv.env['API_KEY']!;
@@ -22,18 +22,15 @@ class CryptoController extends GetxController {
     super.onInit();
     fetchCryptoData();
 
-    // Verilerin 5 saniyede bir güncellenmesi için Timer
     _timer = Timer.periodic(const Duration(seconds: 300), (timer) {
       fetchCryptoData();
     });
 
-    //* Arama işlemi için query'i güncelliyoruz
     searchController.addListener(() {
       updateSearchQuery(searchController.text);
     });
   }
 
-  // API'den veri çekme fonksiyonu
   Future<void> fetchCryptoData() async {
     try {
       isLoading(true);
@@ -61,7 +58,6 @@ class CryptoController extends GetxController {
     }
   }
 
-  //! Arama sorgusuna göre filtrelenmiş listemiz
   List<CryptoModel> get filteredList {
     if (searchQuery.value.isEmpty) {
       return cryptoList;
@@ -90,7 +86,7 @@ class CryptoController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-    _timer?.cancel(); // Sayfa kapatıldığında timer'ı durdur
+    _timer?.cancel();
     searchController.dispose();
   }
 }

@@ -55,4 +55,7 @@ class CryptoModel {
       name: json['name']?.toString() ?? 'Unknown',
     );
   }
+
+  // Getter to check if the price is increasing
+  bool get isIncreasing => changeDay > 0;
 }

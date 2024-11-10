@@ -1,97 +1,137 @@
 import 'package:currx/controllers/crypto_controller.dart';
-import 'package:currx/pages/crypto_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class CryptoTab extends StatelessWidget {
   const CryptoTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final CryptoController controller = Get.find();
+    // Get the CryptoController instance
+    final cryptoController = Get.find<CryptoController>();
 
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.only(top: 10.0, left: 16.0, right: 16.0),
-        child: Obx(() {
-          //* Veri boş ise bu ayzacak
-          if (controller.filteredList.isEmpty) {
-            return const Center(child: Text('Veri Yok'));
-          }
+    // Format price for better UI consistency
+    String formatPrice(double price) {
+      return price.toStringAsFixed(2);
+    }
 
-          return ListView.builder(
-            itemCount: controller.filteredList.length,
-            itemBuilder: (context, index) {
-              final crypto = controller.filteredList[index];
-              final changeColor =
-                  crypto.changeDay < 0 ? Colors.red : Colors.green;
+    return Obx(() {
+      if (cryptoController.filteredList.isEmpty) {
+        return const Center(child: Text('No crypto data available.'));
+      }
 
-              return Card(
-                color: Colors.white,
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                margin: const EdgeInsets.symmetric(vertical: 8.0),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.all(16.0),
-                  leading: CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.red[500],
-                    child: Text(
-                      crypto.code.length > 4
-                          ? crypto.code
-                              .substring(0, 4) //* İlk 4 harfi gösteriyoruz
-                          : crypto.code,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  title: Text(
-                    crypto.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                  subtitle: Text(
-                    crypto.code,
-                    style: const TextStyle(
-                        color: Colors.grey, fontWeight: FontWeight.w700),
-                  ),
-                  trailing: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.center,
+      return ListView.builder(
+        itemCount: cryptoController.filteredList.length,
+        itemBuilder: (context, index) {
+          final crypto = cryptoController.filteredList[index];
+          final timeString = DateFormat('HH:mm').format(DateTime.now());
+          final dateString = DateFormat('dd/MM/yyyy').format(DateTime.now());
+
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            color: crypto.isIncreasing ? Colors.green[50] : Colors.red[50],
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Üst kısım: Başlık ve Saat
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '${crypto.pricestr} USD',
+                        crypto.name,
                         style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
                         ),
                       ),
-                      Text(
-                        '${crypto.changeDaystr}%',
-                        style: TextStyle(
-                          color: changeColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            timeString,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          Text(
+                            dateString,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  // Alt kısım: Fiyatlar ve Değişim
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Alış Fiyatı
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${formatPrice(crypto.price)} \$',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // Değişim Oranı
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: crypto.isIncreasing
+                              ? Colors.green[100]
+                              : Colors.red[100],
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              crypto.isIncreasing
+                                  ? Icons.arrow_upward
+                                  : Icons.arrow_downward,
+                              color: crypto.isIncreasing
+                                  ? Colors.green
+                                  : Colors.red,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '%${crypto.changeDay.abs().toStringAsFixed(2)}',
+                              style: TextStyle(
+                                color: crypto.isIncreasing
+                                    ? Colors.green
+                                    : Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                  onTap: () {
-                    Get.to(() => CryptoDetailPage(crypto: crypto));
-                  },
-                ),
-              );
-            },
+                ],
+              ),
+            ),
           );
-        }),
-      ),
-    );
+        },
+      );
+    });
   }
 }

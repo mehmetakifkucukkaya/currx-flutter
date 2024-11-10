@@ -26,12 +26,12 @@ class ListTileWidget<T> extends StatelessWidget {
     final timeString = DateFormat('HH:mm').format(dateTime);
     final dateString = DateFormat('dd/MM/yyyy').format(dateTime);
 
-    // Format the prices with two decimal places for better UI consistency
     String formatPrice(double price) {
       return price.toStringAsFixed(2);
     }
 
     return Card(
+      color: isIncreasing ? Colors.green[50] : Colors.red[50],
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(16),

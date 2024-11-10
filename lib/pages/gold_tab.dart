@@ -21,7 +21,6 @@ class GoldTab extends StatelessWidget {
       }
 
       return ListView.builder(
-        padding: const EdgeInsets.all(10),
         itemCount: controller.filteredGoldList.length,
         itemBuilder: (context, index) {
           var gold = controller.filteredGoldList[index];
