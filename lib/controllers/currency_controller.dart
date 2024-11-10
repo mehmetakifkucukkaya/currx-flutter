@@ -1,14 +1,15 @@
+import 'dart:async';
+
+import 'package:currx/model/currency.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-
-import '../model/currency.dart';
 
 class CurrencyController extends GetxController {
   var currencies = <Currency>[].obs;
   var filteredCurrencies = <Currency>[].obs;
   var isLoading = true.obs;
-  RxString searchQuery = ''.obs; 
+  RxString searchQuery = ''.obs;
 
   final apiKey = dotenv.env['API_KEY']!;
 
@@ -16,7 +17,10 @@ class CurrencyController extends GetxController {
   void onInit() {
     super.onInit();
     fetchCurrencies();
-    
+
+    //! Her 5 dakikada bir güncelleme yapıyoruz ve apiden verileri çekeren güncelliyoruz
+    Timer.periodic(const Duration(minutes: 5), (_) => fetchCurrencies());
+
     debounce(
       searchQuery,
       (_) => filterCurrencies(),
@@ -40,7 +44,6 @@ class CurrencyController extends GetxController {
   }
 
   Future<void> fetchCurrencies() async {
-    isLoading(true);
     try {
       Dio dio = Dio();
       var response = await dio.get(
@@ -52,10 +55,15 @@ class CurrencyController extends GetxController {
           },
         ),
       );
+
       var data = response.data['result'];
-      currencies.value = List<Currency>.from(
+
+      // API'den gelen veriyi direk Currency listesine çeviriyoruz
+      var newCurrencies = List<Currency>.from(
         data.map((currency) => Currency.fromJson(currency)),
       );
+
+      currencies.value = newCurrencies;
       filterCurrencies();
     } catch (e) {
       print("API isteği başarısız: $e");

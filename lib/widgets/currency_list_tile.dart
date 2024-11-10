@@ -1,7 +1,6 @@
 import 'package:currx/model/currency.dart';
 import 'package:flutter/material.dart';
-
-//TODO: Ülke bayrakları gelmiyor. Ülke bayrağı gelecek şekilde ayarlarnacak
+import 'package:intl/intl.dart';
 
 class CurrencyListTile extends StatelessWidget {
   final Currency currency;
@@ -10,64 +9,127 @@ class CurrencyListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Günlük değişimi hesaplıyoruz
-    double changePercentage = ((currency.sellingPrice - currency.buyingPrice) /
-            currency.buyingPrice) *
-        100;
-
-    // Değişim oranına göre renk belirliyoruz (Yükseliş veya düşüş durummu)
-    String changeColor = changePercentage >= 0 ? 'green' : 'red';
+    final timeString = DateFormat('HH:mm').format(currency.dateTime);
+    final dateString = DateFormat('dd/MM/yyyy').format(currency.dateTime);
 
     return Card(
-      color: Colors.white,
-      elevation: 2.0,
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: ListTile(
-        //* Bayrak
-        // leading: currency.flagUrl.isNotEmpty
-        //     ? SizedBox(
-        //         width: 40,
-        //         height: 40,
-        //         child: Image.network(
-        //           currency.flagUrl,
-        //           fit: BoxFit
-        //               .cover, // Görüntünün kutuya tam oturmasını sağlıyoruz
-        //         ),
-        //       )
-        //     : Container(width: 40, height: 40, color: Colors.grey),
-        //* Döviz ismi
-        title: Text(
-          currency.name,
-          style: const TextStyle(
-            color: Colors.red, // Kırmızı renk başlıklar için
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        subtitle: Row(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
           children: [
-            //* Döviz fiyatı
-
-            Text(
-              'Fiyat: ${currency.sellingPrice.toStringAsFixed(2)} ₺',
-              style: const TextStyle(
-                color: Colors.black,
-              ),
+            // Üst kısım: Başlık ve Saat
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  currency.name,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      timeString,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      dateString,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(width: 10),
-            //* Döviz değişim oranı
-            Text(
-              "${changePercentage.toStringAsFixed(2)}%",
-              style: TextStyle(
-                color: changeColor == 'green' ? Colors.green : Colors.red,
-                fontWeight: FontWeight.bold,
-              ),
+            const SizedBox(height: 16),
+            // Alt kısım: Fiyatlar ve Değişim
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Alış Fiyatı
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'ALIŞ',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Text(
+                      '${currency.buyingPrice.toStringAsFixed(4)} ₺',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                // Satış Fiyatı
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'SATIŞ',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Text(
+                      '${currency.sellingPrice.toStringAsFixed(4)} ₺',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                // Değişim Oranı
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: currency.isIncreasing
+                        ? Colors.green[50]
+                        : Colors.red[50],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        currency.isIncreasing
+                            ? Icons.arrow_upward
+                            : Icons.arrow_downward,
+                        color:
+                            currency.isIncreasing ? Colors.green : Colors.red,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '%${currency.rate.abs().toStringAsFixed(2)}',
+                        style: TextStyle(
+                          color:
+                              currency.isIncreasing ? Colors.green : Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-        //* Değişim yönü
-        trailing: Icon(
-          changeColor == 'green' ? Icons.arrow_upward : Icons.arrow_downward,
-          color: changeColor == 'green' ? Colors.green : Colors.red,
         ),
       ),
     );

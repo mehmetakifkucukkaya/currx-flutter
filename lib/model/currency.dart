@@ -3,49 +3,46 @@ class Currency {
   final String code;
   final double buyingPrice;
   final double sellingPrice;
-  final String flagUrl;
+  final double rate;
+  final DateTime dateTime;
 
   Currency({
     required this.name,
     required this.code,
     required this.buyingPrice,
     required this.sellingPrice,
-    required this.flagUrl,
+    required this.rate,
+    required this.dateTime,
   });
 
-  //  JSON verisini modele dönüştürme metodumuz
   factory Currency.fromJson(Map<String, dynamic> json) {
     double buying = double.tryParse(json['buying'].toString()) ?? 0.0;
     double selling = double.tryParse(json['selling'].toString()) ?? 0.0;
     String code = json['name'].toString().split(' ').last;
+    double rate = double.tryParse(json['rate'].toString()) ?? 0.0;
 
-    // Ülke bayrağını almak için ülke kodunu eşliyorz
-    String countryCode = _getCountryCodeFromCurrency(code);
+    DateTime dateTime;
+    try {
+      if (json['datetime'] != null) {
+        dateTime = DateTime.parse(json['datetime']);
+      } else if (json['date'] != null && json['time'] != null) {
+        dateTime = DateTime.parse('${json['date']}T${json['time']}:00.000Z');
+      } else {
+        dateTime = DateTime.now();
+      }
+    } catch (e) {
+      dateTime = DateTime.now();
+    }
 
     return Currency(
       name: json['name'],
       code: code,
       buyingPrice: buying,
       sellingPrice: selling,
-      flagUrl:
-          'https://restcountries.com/v3.1/alpha/$countryCode/flags', // Ülke koduna göre bayrak URL'si
+      rate: rate,
+      dateTime: dateTime,
     );
   }
 
-  // Döviz koduna göre ülke kodunu eşlemek için  fonksiyon
-  static String _getCountryCodeFromCurrency(String currencyCode) {
-    switch (currencyCode) {
-      case 'USD':
-        return 'US';
-      case 'EUR':
-        return 'DE';
-      case 'GBP':
-        return 'GB';
-      case 'JPY':
-        return 'JP';
-
-      default:
-        return 'US';
-    }
-  }
+  bool get isIncreasing => rate > 0;
 }
